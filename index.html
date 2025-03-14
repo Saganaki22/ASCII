@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII | Custom ASCII Generator</title>
+    <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
+    <meta name="description" content="Create custom ASCII art from your photos with ease! Upload your image and turn it into unique, detailed ASCII art instantly. Simple, fun, and creative!">
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="favicon/android-chrome-512x512.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="ASCII | Custom ASCII Generator">
+    <meta property="og:description" content="Create custom ASCII art from your photos with ease! Upload your image and turn it into unique, detailed ASCII art instantly. Simple, fun, and creative!">
+    <meta property="og:image" content="https://i.ibb.co/60106cVx/og-ascii.jpg">
+    <meta property="og:url" content="https://saganaki22.github.io/ASCII/">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ASCII | Custom ASCII Generator">
+    <meta name="twitter:description" content="Create custom ASCII art from your photos with ease! Upload your image and turn it into unique, detailed ASCII art instantly. Simple, fun, and creative!">
+    <meta name="twitter:image" content="https://i.ibb.co/60106cVx/og-ascii.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/phosphor-icons/1.4.2/style.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --primary-light: #6f87ff;
+            --dark-bg: #121212;
+            --dark-surface: #1e1e1e;
+            --dark-text: #f1f1f1;
+            --light-bg: #f9f9f9;
+            --light-surface: #ffffff;
+            --light-text: #222222;
+            --border-radius: 8px;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        body.light-mode {
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .app-header {
+            background-color: var(--dark-surface);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            position: sticky;
+            top: 0;
+        }
+
+        body.light-mode .app-header {
+            background-color: var(--light-surface);
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .hamburger-menu {
+            display: none;
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            background: var(--dark-surface);
+            border: 2px solid var(--dark-text);
+            color: var(--dark-text);
+            cursor: pointer;
+            z-index: 100;
+            padding: 0.4rem 0.7rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            line-height: 1;
+        }
+
+        body.light-mode .hamburger-menu {
+            color: var(--light-text);
+            background: var(--light-surface);
+            border: 2px solid var(--light-text);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main content */
+        .app-content {
+            display: flex;
+            flex: 1;
+            transition: var(--transition);
+        }
+
+        /* Sidebar */
+        .controls-panel {
+            background-color: var(--dark-surface);
+            width: 300px;
+            padding: 1rem;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            z-index: 5;
+            max-height: calc(100vh - 60px);
+        }
+
+        body.light-mode .controls-panel {
+            background-color: var(--light-surface);
+        }
+
+        .toggle-all-container {
+            margin-bottom: 1rem;
+            display: none; /* Hidden by default, shown on mobile */
+        }
+        
+        @media (max-width: 991px) {
+            .toggle-all-container {
+                display: block;
+            }
+        }
+
+        .control-section {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode .control-section {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .section-content {
+            display: block;
+            padding-top: 0.5rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .section-title .icon {
+            margin-right: 0.5rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .section-title .collapse-icon {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .section-title .collapse-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .control-section.collapsed .section-title .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .control-section.collapsed .section-content {
+            display: none;
+        }
+
+        .control-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .control-item label {
+            flex: 0 0 100%;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .range-control {
+            display: flex;
+            width: 100%;
+            align-items: center;
+        }
+
+        .range-control input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        body.light-mode .range-control input[type="range"] {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .range-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .range-control input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+        }
+
+        .range-value {
+            min-width: 40px;
+            text-align: center;
+            margin-left: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+
+        body.light-mode .range-value {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Improved Toggle Switch - now a simple checkbox */
+        .toggle-control {
+            display: inline-block;
+            margin-left: auto;
+            position: relative;
+        }
+
+        .toggle-control input[type="checkbox"] {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        /* iOS-style toggle switch */
+        .toggle-control {
+            height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-control .toggle-slider {
+            display: inline-block;
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background-color: #e9e9ea;
+            border-radius: 12px;
+            transition: .4s;
+            cursor: pointer;
+        }
+
+        .toggle-control .toggle-slider:before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .25s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .toggle-control input:checked + .toggle-slider {
+            background-color: #4CD964;
+        }
+
+        .toggle-control input:checked + .toggle-slider:before {
+            transform: translateX(18px);
+        }
+
+        /* iOS toggle switches are now active */
+
+        /* Scrollbar styling for different themes */
+        /* For Webkit browsers (Chrome, Safari, etc.) */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-surface);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 6px;
+            border: 2px solid var(--dark-surface);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Light mode scrollbars */
+        body.light-mode ::-webkit-scrollbar-track {
+            background: var(--light-surface);
+        }
+
+        body.light-mode ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border: 2px solid var(--light-surface);
+        }
+
+        body.light-mode ::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        /* Firefox scrollbar support */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #444 var(--dark-surface);
+        }
+
+        body.light-mode * {
+            scrollbar-color: #ccc var(--light-surface);
+        }
+
+        /* Improved Select Dropdown */
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: var(--dark-surface);
+            color: var(--dark-text);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgb(241, 241, 241)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            padding-right: 2rem;
+        }
+
+        body.light-mode select {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: var(--light-surface);
+            color: var(--light-text);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgb(34, 34, 34)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.25);
+        }
+
+        select:hover {
+            border-color: var(--primary-light);
+        }
+
+        body.light-mode select:hover {
+            border-color: var(--primary-light);
+        }
+
+        /* Dropdown Options Styling */
+        select option {
+            background-color: var(--dark-surface);
+            color: var(--dark-text);
+            padding: 8px;
+        }
+
+        body.light-mode select option {
+            background-color: var(--light-surface);
+            color: var(--light-text);
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: var(--dark-surface);
+            color: var(--dark-text);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        body.light-mode input[type="text"],
+        body.light-mode input[type="file"] {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: var(--light-surface);
+            color: var(--light-text);
+        }
+
+        input[type="text"]:focus, input[type="file"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.25);
+        }
+
+        input[type="text"]:hover, input[type="file"]:hover,
+        select:hover {
+            border-color: var(--primary-light);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: 0.5rem;
+            accent-color: var(--primary);
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        body.light-mode .file-upload {
+            border: 2px dashed rgba(0, 0, 0, 0.1);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+        }
+
+        .file-upload i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload span {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-outlined {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outlined:hover {
+            background-color: rgba(74, 107, 255, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        /* Output area */
+        .output-container {
+            flex: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Hide close button by default on ALL screen sizes */
+        .close-menu {
+            display: none !important; /* Hide on all screen sizes by default */
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .output-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .ascii-container {
+            flex: 1;
+            overflow: auto;
+            background-color: var(--dark-surface);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        body.light-mode .ascii-container {
+            background-color: var(--light-surface);
+        }
+
+        #ascii-art {
+            white-space: pre;
+            font-family: 'Cascadia Code', 'Fira Code', Consolas, Monaco, 'Liberation Mono', monospace;
+            font-size: 7px;
+            line-height: 7px;
+            overflow: auto;
+        }
+
+        body.light-mode #ascii-art {
+            color: var(--light-text);
+        }
+
+        .action-buttons {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .app-footer {
+            background-color: var(--dark-surface);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        body.light-mode .app-footer {
+            background-color: var(--light-surface);
+        }
+
+        /* Canvas */
+        #canvas {
+            display: none;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 991px) {
+            .app-content {
+                flex-direction: column;
+            }
+            
+            .controls-panel {
+                width: 100%;
+                max-height: 60vh;
+            }
+            
+            .section-title {
+                cursor: pointer;
+            }
+            
+            /* Show hamburger menu on tablets */
+            .hamburger-menu {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+            }
+            
+            /* Menu positioning for tablets */
+            .controls-panel {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                width: 85%;
+                max-width: 360px;
+                max-height: 100vh;
+                z-index: 20;
+                padding-top: 4rem;
+            }
+            
+            .controls-panel.open {
+                left: 0;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 15;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            /* Position the close button - ONLY FOR MOBILE/TABLET */
+            .close-menu {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                font-size: 2rem;
+                font-weight: bold;
+                background: #333333;
+                border: 2px solid white;
+                color: white;
+                cursor: pointer;
+                z-index: 100;
+                padding: 0.3rem 0.5rem;
+                border-radius: var(--border-radius);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                display: none; /* Still hidden by default even on mobile */
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                line-height: 1;
+            }
+            
+            /* Show close button when menu is open - ONLY FOR MOBILE/TABLET */
+            .controls-panel.open .close-menu {
+                display: flex !important; /* Only show on mobile/tablet when menu is open */
+            }
+            
+            body.light-mode .close-menu {
+                background: #333333;
+                color: white;
+                border: 2px solid white;
+            }
+            
+            .btn {
+                flex: 1;
+            }
+            
+            .range-control label {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .app-header {
+                padding: 1rem 3rem;
+                position: relative;
+            }
+            
+            .btn {
+                flex: 1;
+            }
+            
+            .range-control label {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <button class="hamburger-menu" id="menu-toggle">
+                ≡
+            </button>
+            <h1 class="app-title">ASCII</h1>
+        </header>
+
+        <div class="overlay" id="overlay"></div>
+
+        <main class="app-content">
+            <aside class="controls-panel" id="controls-panel">
+                <button class="close-menu" id="close-menu" aria-label="Close menu">
+                    X
+                </button>
+                
+                <!-- Add Toggle All Controls Button -->
+                <div class="toggle-all-container">
+                    <button id="toggle-all-controls" class="btn btn-outlined">
+                        <i class="ph-arrows-in"></i> Collapse All
+                    </button>
+                </div>
+
+                <section class="control-section" id="global-settings">
+                    <div class="section-title">
+                        <i class="ph-gear icon"></i>
+                        <span>Global Settings</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <div class="control-item">
+                            <label for="theme">Theme</label>
+                            <select id="theme">
+                                <option value="dark" selected>Dark</option>
+                                <option value="light">Light</option>
+                            </select>
+                        </div>
+                        <div class="control-item">
+                            <label for="ignoreWhite">Ignore Pure White</label>
+                            <label class="toggle-control">
+                                <input type="checkbox" id="ignoreWhite" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-section" id="upload-section">
+                    <div class="section-title">
+                        <i class="ph-upload icon"></i>
+                        <span>1. Upload Your File</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <div class="file-upload" id="file-upload-container">
+                            <i class="ph-image"></i>
+                            <p>Drag & drop an image or click to select</p>
+                            <input type="file" id="upload" accept="image/*">
+                            <span id="file-name">No file selected</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-section" id="basic-adjustments">
+                    <div class="section-title">
+                        <i class="ph-sliders icon"></i>
+                        <span>2. Basic Adjustments</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <div class="control-item">
+                            <label for="asciiWidth">Output Width (chars)</label>
+                            <div class="range-control">
+                                <input type="range" id="asciiWidth" min="20" max="300" value="150">
+                                <span class="range-value" id="asciiWidthVal">150</span>
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <label for="brightness">Brightness</label>
+                            <div class="range-control">
+                                <input type="range" id="brightness" min="-100" max="100" value="0">
+                                <span class="range-value" id="brightnessVal">0</span>
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <label for="contrast">Contrast</label>
+                            <div class="range-control">
+                                <input type="range" id="contrast" min="-100" max="100" value="0">
+                                <span class="range-value" id="contrastVal">0</span>
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <label for="blur">Blur (px)</label>
+                            <div class="range-control">
+                                <input type="range" id="blur" min="0" max="10" step="0.01" value="0">
+                                <span class="range-value" id="blurVal">0</span>
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <label for="invert">Invert Colors</label>
+                            <label class="toggle-control">
+                                <input type="checkbox" id="invert">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-section" id="dithering-section">
+                    <div class="section-title">
+                        <i class="ph-dots-nine icon"></i>
+                        <span>3. Dithering Options</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <div class="control-item">
+                            <label for="dithering">Enable Dithering</label>
+                            <label class="toggle-control">
+                                <input type="checkbox" id="dithering" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="control-item">
+                            <label for="ditherAlgorithm">Dither Algorithm</label>
+                            <select id="ditherAlgorithm">
+                                <option value="floyd" selected>Floyd–Steinberg</option>
+                                <option value="atkinson">Atkinson</option>
+                                <option value="noise">Noise</option>
+                                <option value="ordered">Ordered</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-section" id="charset-section">
+                    <div class="section-title">
+                        <i class="ph-text-t icon"></i>
+                        <span>4. Character Set</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <div class="control-item">
+                            <label for="charset">Select Set</label>
+                            <select id="charset">
+                                <option value="detailed" selected>Detailed</option>
+                                <option value="standard">Standard</option>
+                                <option value="blocks">Blocks</option>
+                                <option value="binary">Binary</option>
+                                <option value="hex">Hex</option>
+                                <option value="manual">Manual</option>
+                            </select>
+                        </div>
+                        <div class="control-item" id="manualCharControl" style="display: none;">
+                            <label for="manualCharInput">Manual Character</label>
+                            <input type="text" id="manualCharInput" maxlength="1" value="0">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-section" id="edge-detection-section">
+                    <div class="section-title">
+                        <i class="ph-selection icon"></i>
+                        <span>5. Edge Detection</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="edgeMethod" id="edgeNone" value="none" checked>
+                                No Edge Detection
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="edgeMethod" id="edgeSobel" value="sobel">
+                                Sobel Edge Detection
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="edgeMethod" id="edgeDoG" value="dog">
+                                DoG (Contour) Detection
+                            </label>
+                        </div>
+                        <div class="control-item" id="sobelThresholdControl" style="display: none;">
+                            <label for="edgeThreshold">Sobel Threshold</label>
+                            <div class="range-control">
+                                <input type="range" id="edgeThreshold" min="0" max="255" value="100">
+                                <span class="range-value" id="edgeThresholdVal">100</span>
+                            </div>
+                        </div>
+                        <div class="control-item" id="dogThresholdControl" style="display: none;">
+                            <label for="dogEdgeThreshold">DoG Threshold</label>
+                            <div class="range-control">
+                                <input type="range" id="dogEdgeThreshold" min="0" max="255" value="100">
+                                <span class="range-value" id="dogEdgeThresholdVal">100</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-section" id="display-section">
+                    <div class="section-title">
+                        <i class="ph-magnifying-glass icon"></i>
+                        <span>6. Display Settings</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <div class="control-item">
+                            <label for="zoom">Zoom (%)</label>
+                            <div class="range-control">
+                                <input type="range" id="zoom" min="20" max="600" value="100">
+                                <span class="range-value" id="zoomVal">100</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-section" id="actions-section">
+                    <div class="section-title">
+                        <i class="ph-magic-wand icon"></i>
+                        <span>Actions</span>
+                        <i class="ph-caret-down collapse-icon"></i>
+                    </div>
+                    <div class="section-content">
+                        <button id="reset" class="btn btn-outlined">
+                            <i class="ph-arrow-counter-clockwise"></i> Reset All Settings
+                        </button>
+                    </div>
+                </section>
+            </aside>
+
+            <div class="output-container">
+                <div class="output-header">
+                    <h2 class="output-title">ASCII Art Output</h2>
+                </div>
+                <div class="ascii-container">
+                    <pre id="ascii-art"></pre>
+                </div>
+                <div class="action-buttons">
+                    <button id="copyBtn" class="btn">
+                        <i class="ph-copy"></i> Copy ASCII Art
+                    </button>
+                    <button id="downloadBtn" class="btn">
+                        <i class="ph-download"></i> Download PNG
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Copyright 2025 &copy; DrBaph, UK. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        // ---------------- Global Variables ----------------
+        let currentImage = null;
+        const baseFontSize = 7; // Base font size for ASCII art
+
+        // ---------------- Helper Functions ----------------
+
+        // Clamp a value between min and max.
+        function clamp(value, min, max) {
+          return Math.max(min, Math.min(max, value));
+        }
+
+        // Generate a normalized 2D Gaussian kernel.
+        function gaussianKernel2D(sigma, kernelSize) {
+          const kernel = [];
+          const half = Math.floor(kernelSize / 2);
+          let sum = 0;
+          for (let y = -half; y <= half; y++) {
+            const row = [];
+            for (let x = -half; x <= half; x++) {
+              const value = Math.exp(-(x * x + y * y) / (2 * sigma * sigma));
+              row.push(value);
+              sum += value;
+            }
+            kernel.push(row);
+          }
+          // Normalize the kernel.
+          for (let y = 0; y < kernelSize; y++) {
+            for (let x = 0; x < kernelSize; x++) {
+              kernel[y][x] /= sum;
+            }
+          }
+          return kernel;
+        }
+
+        // Convolve a 2D image (array) with a 2D kernel.
+        function convolve2D(img, kernel) {
+          const height = img.length,
+                width = img[0].length;
+          const kernelSize = kernel.length,
+                half = Math.floor(kernelSize / 2);
+          const output = [];
+          for (let y = 0; y < height; y++) {
+            output[y] = [];
+            for (let x = 0; x < width; x++) {
+              let sum = 0;
+              for (let ky = 0; ky < kernelSize; ky++) {
+                for (let kx = 0; kx < kernelSize; kx++) {
+                  const yy = y + ky - half;
+                  const xx = x + kx - half;
+                  let pixel = (yy >= 0 && yy < height && xx >= 0 && xx < width) ? img[yy][xx] : 0;
+                  sum += pixel * kernel[ky][kx];
+                }
+              }
+              output[y][x] = sum;
+            }
+          }
+          return output;
+        }
+
+        // Compute the Difference of Gaussians on a 2D grayscale image.
+        function differenceOfGaussians2D(gray, sigma1, sigma2, kernelSize) {
+          const kernel1 = gaussianKernel2D(sigma1, kernelSize);
+          const kernel2 = gaussianKernel2D(sigma2, kernelSize);
+          const blurred1 = convolve2D(gray, kernel1);
+          const blurred2 = convolve2D(gray, kernel2);
+          const height = gray.length,
+                width = gray[0].length;
+          const dog = [];
+          for (let y = 0; y < height; y++) {
+            dog[y] = [];
+            for (let x = 0; x < width; x++) {
+              dog[y][x] = blurred1[y][x] - blurred2[y][x];
+            }
+          }
+          return dog;
+        }
+
+        // Apply the Sobel operator to a 2D image, returning gradient magnitude and angle arrays.
+        function applySobel2D(img, width, height) {
+          const mag = [],
+                angle = [];
+          for (let y = 0; y < height; y++) {
+            mag[y] = [];
+            angle[y] = [];
+            for (let x = 0; x < width; x++) {
+              mag[y][x] = 0;
+              angle[y][x] = 0;
+            }
+          }
+          const kernelX = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+          const kernelY = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+          for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+              let Gx = 0, Gy = 0;
+              for (let ky = -1; ky <= 1; ky++) {
+                for (let kx = -1; kx <= 1; kx++) {
+                  const pixel = img[y + ky][x + kx];
+                  Gx += pixel * kernelX[ky + 1][kx + 1];
+                  Gy += pixel * kernelY[ky + 1][kx + 1];
+                }
+              }
+              const g = Math.sqrt(Gx * Gx + Gy * Gy);
+              mag[y][x] = g;
+              let theta = Math.atan2(Gy, Gx) * (180 / Math.PI);
+              if (theta < 0) theta += 180;
+              angle[y][x] = theta;
+            }
+          }
+          return { mag, angle };
+        }
+
+        // Non-maximum suppression to thin out the edges.
+        function nonMaxSuppression(mag, angle, width, height) {
+          const suppressed = [];
+          for (let y = 0; y < height; y++) {
+            suppressed[y] = [];
+            for (let x = 0; x < width; x++) {
+              suppressed[y][x] = 0;
+            }
+          }
+          for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+              const currentMag = mag[y][x];
+              let neighbor1 = 0, neighbor2 = 0;
+              const theta = angle[y][x];
+              if ((theta >= 0 && theta < 22.5) || (theta >= 157.5 && theta <= 180)) {
+                // 0° direction: compare left and right.
+                neighbor1 = mag[y][x - 1];
+                neighbor2 = mag[y][x + 1];
+              } else if (theta >= 22.5 && theta < 67.5) {
+                // 45° direction: compare top-right and bottom-left.
+                neighbor1 = mag[y - 1][x + 1];
+                neighbor2 = mag[y + 1][x - 1];
+              } else if (theta >= 67.5 && theta < 112.5) {
+                // 90° direction: compare top and bottom.
+                neighbor1 = mag[y - 1][x];
+                neighbor2 = mag[y + 1][x];
+              } else if (theta >= 112.5 && theta < 157.5) {
+                // 135° direction: compare top-left and bottom-right.
+                neighbor1 = mag[y - 1][x - 1];
+                neighbor2 = mag[y + 1][x + 1];
+              }
+              suppressed[y][x] = (currentMag >= neighbor1 && currentMag >= neighbor2) ? currentMag : 0;
+            }
+          }
+          return suppressed;
+        }
+
+        // ---------------- ASCII Art Generation Functions ----------------
+
+        // Generate standard ASCII art (non-DOG modes).
+        function generateASCII(img) {
+          const edgeMethod = document.querySelector('input[name="edgeMethod"]:checked').value;
+          if (edgeMethod === 'dog') {
+            generateContourASCII(img);
+            return;
+          }
+          
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          const asciiWidth = parseInt(document.getElementById('asciiWidth').value, 10);
+          const brightness = parseFloat(document.getElementById('brightness').value);
+          const contrastValue = parseFloat(document.getElementById('contrast').value);
+          const blurValue = parseFloat(document.getElementById('blur').value);
+          const ditheringEnabled = document.getElementById('dithering').checked;
+          const ditherAlgorithm = document.getElementById('ditherAlgorithm').value;
+          const invertEnabled = document.getElementById('invert').checked;
+          const ignoreWhite = document.getElementById('ignoreWhite').checked;
+          const charset = document.getElementById('charset').value;
+          
+          let gradient;
+          switch (charset) {
+            case 'standard': gradient = "@%#*+=-:."; break;
+            case 'blocks': gradient = "█▓▒░ "; break;
+            case 'binary': gradient = "01"; break;
+            case 'manual':
+              const manualChar = document.getElementById('manualCharInput').value || "0";
+              gradient = manualChar + " ";
+              break;
+            case 'hex': gradient = "0123456789ABCDEF"; break;
+            case 'detailed':
+            default: gradient = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'.";
+              break;
+          }
+          
+          const nLevels = gradient.length;
+          const contrastFactor = (259 * (contrastValue + 255)) / (255 * (259 - contrastValue));
+          const fontAspectRatio = 0.55;
+          const asciiHeight = Math.round((img.height / img.width) * asciiWidth * fontAspectRatio);
+          
+          canvas.width = asciiWidth;
+          canvas.height = asciiHeight;
+          ctx.filter = blurValue > 0 ? `blur(${blurValue}px)` : "none";
+          ctx.drawImage(img, 0, 0, asciiWidth, asciiHeight);
+          
+          const imageData = ctx.getImageData(0, 0, asciiWidth, asciiHeight);
+          const data = imageData.data;
+          let gray = [], grayOriginal = [];
+          for (let i = 0; i < data.length; i += 4) {
+            let lum = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+            if (invertEnabled) lum = 255 - lum;
+            let adjusted = clamp(contrastFactor * (lum - 128) + 128 + brightness, 0, 255);
+            gray.push(adjusted);
+            grayOriginal.push(adjusted);
+          }
+          
+          let ascii = "";
+          if (document.querySelector('input[name="edgeMethod"]:checked').value === 'sobel') {
+            const threshold = parseInt(document.getElementById('edgeThreshold').value, 10);
+            gray = applyEdgeDetection(gray, asciiWidth, asciiHeight, threshold);
+            for (let y = 0; y < asciiHeight; y++) {
+              let line = "";
+              for (let x = 0; x < asciiWidth; x++) {
+                const idx = y * asciiWidth + x;
+                if (ignoreWhite && grayOriginal[idx] === 255) {
+                  line += " ";
+                  continue;
+                }
+                const computedLevel = Math.round((gray[idx] / 255) * (nLevels - 1));
+                line += gradient.charAt(computedLevel);
+              }
+              ascii += line + "\n";
+            }
+          } else if (ditheringEnabled) {
+            if (ditherAlgorithm === 'floyd') {
+              // Floyd–Steinberg dithering
+              for (let y = 0; y < asciiHeight; y++) {
+                let line = "";
+                for (let x = 0; x < asciiWidth; x++) {
+                  const idx = y * asciiWidth + x;
+                  if (ignoreWhite && grayOriginal[idx] === 255) { line += " "; continue; }
+                  let computedLevel = Math.round((gray[idx] / 255) * (nLevels - 1));
+                  line += gradient.charAt(computedLevel);
+                  const newPixel = (computedLevel / (nLevels - 1)) * 255;
+                  const error = gray[idx] - newPixel;
+                  const diffusion = error / 8;
+                  if (x + 1 < asciiWidth) { 
+                    gray[idx + 1] = clamp(gray[idx + 1] + error * (7 / 16), 0, 255); 
+                  }
+                  if (x - 1 >= 0 && y + 1 < asciiHeight) { 
+                    gray[idx - 1 + asciiWidth] = clamp(gray[idx - 1 + asciiWidth] + error * (3 / 16), 0, 255); 
+                  }
+                  if (y + 1 < asciiHeight) { 
+                    gray[idx + asciiWidth] = clamp(gray[idx + asciiWidth] + error * (5 / 16), 0, 255); 
+                  }
+                  if (x + 1 < asciiWidth && y + 1 < asciiHeight) { 
+                    gray[idx + asciiWidth + 1] = clamp(gray[idx + asciiWidth + 1] + error * (1 / 16), 0, 255); 
+                  }
+                }
+                ascii += line + "\n";
+              }
+            } else if (ditherAlgorithm === 'atkinson') {
+              // Atkinson dithering
+              for (let y = 0; y < asciiHeight; y++) {
+                let line = "";
+                for (let x = 0; x < asciiWidth; x++) {
+                  const idx = y * asciiWidth + x;
+                  if (ignoreWhite && grayOriginal[idx] === 255) { line += " "; continue; }
+                  let computedLevel = Math.round((gray[idx] / 255) * (nLevels - 1));
+                  line += gradient.charAt(computedLevel);
+                  const newPixel = (computedLevel / (nLevels - 1)) * 255;
+                  const error = gray[idx] - newPixel;
+                  const diffusion = error / 8;
+                  if (x + 1 < asciiWidth) { 
+                    gray[idx + 1] = clamp(gray[idx + 1] + diffusion, 0, 255); 
+                  }
+                  if (x + 2 < asciiWidth) { 
+                    gray[idx + 2] = clamp(gray[idx + 2] + diffusion, 0, 255); 
+                  }
+                  if (y + 1 < asciiHeight) {
+                    if (x - 1 >= 0) { 
+                      gray[idx - 1 + asciiWidth] = clamp(gray[idx - 1 + asciiWidth] + diffusion, 0, 255); 
+                    }
+                    gray[idx + asciiWidth] = clamp(gray[idx + asciiWidth] + diffusion, 0, 255);
+                    if (x + 1 < asciiWidth) { 
+                      gray[idx + asciiWidth + 1] = clamp(gray[idx + asciiWidth + 1] + diffusion, 0, 255); 
+                    }
+                  }
+                  if (y + 2 < asciiHeight) { 
+                    gray[idx + 2 * asciiWidth] = clamp(gray[idx + 2 * asciiWidth] + diffusion, 0, 255); 
+                  }
+                }
+                ascii += line + "\n";
+              }
+            } else if (ditherAlgorithm === 'noise') {
+              // Noise dithering
+              for (let y = 0; y < asciiHeight; y++) {
+                let line = "";
+                for (let x = 0; x < asciiWidth; x++) {
+                  const idx = y * asciiWidth + x;
+                  if (ignoreWhite && grayOriginal[idx] === 255) { line += " "; continue; }
+                  const noise = (Math.random() - 0.5) * (255 / nLevels);
+                  const noisyValue = clamp(gray[idx] + noise, 0, 255);
+                  let computedLevel = Math.round((noisyValue / 255) * (nLevels - 1));
+                  line += gradient.charAt(computedLevel);
+                }
+                ascii += line + "\n";
+              }
+            } else if (ditherAlgorithm === 'ordered') {
+              // Ordered dithering using a 4x4 Bayer matrix.
+              const bayer = [
+                [0, 8, 2, 10],
+                [12, 4, 14, 6],
+                [3, 11, 1, 9],
+                [15, 7, 13, 5]
+              ];
+              const matrixSize = 4;
+              for (let y = 0; y < asciiHeight; y++) {
+                let line = "";
+                for (let x = 0; x < asciiWidth; x++) {
+                  const idx = y * asciiWidth + x;
+                  if (ignoreWhite && grayOriginal[idx] === 255) { line += " "; continue; }
+                  const p = gray[idx] / 255;
+                  const t = (bayer[y % matrixSize][x % matrixSize] + 0.5) / (matrixSize * matrixSize);
+                  let valueWithDither = p + t - 0.5;
+                  valueWithDither = Math.min(Math.max(valueWithDither, 0), 1);
+                  let computedLevel = Math.floor(valueWithDither * nLevels);
+                  if (computedLevel >= nLevels) computedLevel = nLevels - 1;
+                  line += gradient.charAt(computedLevel);
+                }
+                ascii += line + "\n";
+              }
+            }
+          } else {
+            // Simple mapping without dithering.
+            for (let y = 0; y < asciiHeight; y++) {
+              let line = "";
+              for (let x = 0; x < asciiWidth; x++) {
+                const idx = y * asciiWidth + x;
+                if (ignoreWhite && grayOriginal[idx] === 255) { line += " "; continue; }
+                const computedLevel = Math.round((gray[idx] / 255) * (nLevels - 1));
+                line += gradient.charAt(computedLevel);
+              }
+              ascii += line + "\n";
+            }
+          }
+          document.getElementById('ascii-art').textContent = ascii;
+        }
+
+        // Apply simple Sobel edge detection on a 1D grayscale array.
+        function applyEdgeDetection(gray, width, height, threshold) {
+          let edges = new Array(width * height).fill(255);
+          for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+              let idx = y * width + x;
+              let a = gray[(y - 1) * width + (x - 1)];
+              let b = gray[(y - 1) * width + x];
+              let c = gray[(y - 1) * width + (x + 1)];
+              let d = gray[y * width + (x - 1)];
+              let e = gray[y * width + x];
+              let f = gray[y * width + (x + 1)];
+              let g = gray[(y + 1) * width + (x - 1)];
+              let h = gray[(y + 1) * width + x];
+              let i = gray[(y + 1) * width + (x + 1)];
+              let Gx = (-1 * a) + (0 * b) + (1 * c) +
+                       (-2 * d) + (0 * e) + (2 * f) +
+                       (-1 * g) + (0 * h) + (1 * i);
+              let Gy = (-1 * a) + (-2 * b) + (-1 * c) +
+                       (0 * d) + (0 * e) + (0 * f) +
+                       (1 * g) + (2 * h) + (1 * i);
+              let magVal = Math.sqrt(Gx * Gx + Gy * Gy);
+              let normalized = (magVal / 1442) * 255;
+              edges[idx] = normalized > threshold ? 0 : 255;
+            }
+          }
+          return edges;
+        }
+
+
+        function generateContourASCII(img) {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          const asciiWidth = parseInt(document.getElementById('asciiWidth').value, 10);
+          const brightness = parseFloat(document.getElementById('brightness').value);
+          const contrastValue = parseFloat(document.getElementById('contrast').value);
+          const blurValue = parseFloat(document.getElementById('blur').value);
+          const invertEnabled = document.getElementById('invert').checked;
+          const fontAspectRatio = 0.55;
+          const asciiHeight = Math.round((img.height / img.width) * asciiWidth * fontAspectRatio);
+          canvas.width = asciiWidth;
+          canvas.height = asciiHeight;
+          // Use blur filter if applicable.
+          ctx.filter = blurValue > 0 ? `blur(${blurValue}px)` : "none";
+          ctx.drawImage(img, 0, 0, asciiWidth, asciiHeight);
+          
+          const imageData = ctx.getImageData(0, 0, asciiWidth, asciiHeight);
+          const data = imageData.data;
+          let gray2d = [];
+          const contrastFactor = (259 * (contrastValue + 255)) / (255 * (259 - contrastValue));
+          for (let y = 0; y < asciiHeight; y++) {
+            gray2d[y] = [];
+            for (let x = 0; x < asciiWidth; x++) {
+              const idx = (y * asciiWidth + x) * 4;
+              let lum = 0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2];
+              if (invertEnabled) lum = 255 - lum;
+              lum = clamp(contrastFactor * (lum - 128) + 128 + brightness, 0, 255);
+              gray2d[y][x] = lum;
+            }
+          }
+          
+          const sigma1 = 0.5, sigma2 = 1.0, kernelSize = 3;
+          const dog = differenceOfGaussians2D(gray2d, sigma1, sigma2, kernelSize);
+          const { mag, angle } = applySobel2D(dog, asciiWidth, asciiHeight);
+          const suppressedMag = nonMaxSuppression(mag, angle, asciiWidth, asciiHeight);
+          const threshold = parseInt(document.getElementById('dogEdgeThreshold').value, 10);
+          
+          let ascii = "";
+          for (let y = 0; y < asciiHeight; y++) {
+            let line = "";
+            for (let x = 0; x < asciiWidth; x++) {
+              if (suppressedMag[y][x] > threshold) {
+                let adjustedAngle = (angle[y][x] + 90) % 180;
+                let edgeChar = (adjustedAngle < 22.5 || adjustedAngle >= 157.5) ? "-" :
+                               (adjustedAngle < 67.5) ? "/" :
+                               (adjustedAngle < 112.5) ? "|" : "\\";
+                line += edgeChar;
+              } else {
+                line += " ";
+              }
+            }
+            ascii += line + "\n";
+          }
+          document.getElementById('ascii-art').textContent = ascii;
+        }
+
+        // ---------------- Download Function ----------------
+
+        function downloadPNG() {
+          const preElement = document.getElementById('ascii-art');
+          const asciiText = preElement.textContent;
+          if (!asciiText.trim()) {
+            alert("No ASCII art to download.");
+            return;
+          }
+          
+          // Split the ASCII art into lines.
+          const lines = asciiText.split("\n");
+          
+          // Set a scaling factor (2x resolution for better quality).
+          const scaleFactor = 2;
+          
+          // Define the border margin (in final pixels, then scaled)
+          const borderMargin = 20 * scaleFactor;
+          
+          // Get computed style values from the pre element.
+          const computedStyle = window.getComputedStyle(preElement);
+          const baseFontSize = parseInt(computedStyle.fontSize, 10);
+          const fontSize = baseFontSize * scaleFactor;
+          
+          // Create a temporary canvas to measure text dimensions.
+          const tempCanvas = document.createElement('canvas');
+          const tempCtx = tempCanvas.getContext('2d');
+          tempCtx.font = `${fontSize}px Consolas, Monaco, "Liberation Mono", monospace`;
+          
+          // Determine the maximum line width.
+          let maxLineWidth = 0;
+          for (let i = 0; i < lines.length; i++) {
+            const lineWidth = tempCtx.measureText(lines[i]).width;
+            if (lineWidth > maxLineWidth) {
+              maxLineWidth = lineWidth;
+            }
+          }
+          
+          // Calculate the required text dimensions.
+          const lineHeight = fontSize; // Basic line height.
+          const textWidth = Math.ceil(maxLineWidth);
+          const textHeight = Math.ceil(lines.length * lineHeight);
+          
+          // Create an offscreen canvas with extra space for the border margin.
+          const canvasWidth = textWidth + 2 * borderMargin;
+          const canvasHeight = textHeight + 2 * borderMargin;
+          const offCanvas = document.createElement('canvas');
+          offCanvas.width = canvasWidth;
+          offCanvas.height = canvasHeight;
+          const offCtx = offCanvas.getContext('2d');
+          
+          // Fill the background based on the current theme.
+          const bgColor = document.body.classList.contains('light-mode') ? "#fff" : "#000";
+          offCtx.fillStyle = bgColor;
+          offCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+          
+          // Set the font and text styles.
+          offCtx.font = `${fontSize}px Consolas, Monaco, "Liberation Mono", monospace`;
+          offCtx.textBaseline = 'top';
+          offCtx.fillStyle = document.body.classList.contains('light-mode') ? "#000" : "#eee";
+          
+          // Draw each line of the ASCII art onto the canvas with the margin offset.
+          for (let i = 0; i < lines.length; i++) {
+            offCtx.fillText(lines[i], borderMargin, borderMargin + i * lineHeight);
+          }
+          
+          // Convert the canvas content to a blob and trigger a download.
+          offCanvas.toBlob(function(blob) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'drbaph_ascii_art.png';
+            a.click();
+          });
+        }
+
+        // ---------------- UI Enhancement Functions ----------------
+        
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            console.log("Toggle menu called");
+            const controlsPanel = document.getElementById('controls-panel');
+            const overlay = document.getElementById('overlay');
+            
+            if (controlsPanel.classList.contains('open')) {
+                controlsPanel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                controlsPanel.classList.add('open');
+                overlay.classList.add('active');
+            }
+        }
+        
+        // THIS FUNCTION IS NO LONGER USED - REPLACED WITH DIRECT IMPLEMENTATION
+        // function toggleSection(section) {
+        //   section.classList.toggle('collapsed');
+        //   console.log('Toggled section:', section.id, 'Collapsed:', section.classList.contains('collapsed'));
+        // }
+        
+        // Enhance file upload UI
+        function enhanceFileUpload() {
+          const fileInput = document.getElementById('upload');
+          const fileUploadContainer = document.getElementById('file-upload-container');
+          const fileNameDisplay = document.getElementById('file-name');
+          
+          fileUploadContainer.addEventListener('click', () => {
+            fileInput.click();
+          });
+          
+          fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              fileNameDisplay.textContent = file.name;
+              const reader = new FileReader();
+              reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                  currentImage = img;
+                  generateASCII(img);
+                };
+                img.src = event.target.result;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+          
+          // Drag and drop functionality
+          fileUploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadContainer.style.borderColor = 'var(--primary)';
+          });
+          
+          fileUploadContainer.addEventListener('dragleave', () => {
+            fileUploadContainer.style.borderColor = '';
+          });
+          
+          fileUploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadContainer.style.borderColor = '';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+              fileInput.files = e.dataTransfer.files;
+              fileNameDisplay.textContent = file.name;
+              const reader = new FileReader();
+              reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                  currentImage = img;
+                  generateASCII(img);
+                };
+                img.src = event.target.result;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
+
+        // ---------------- Event Listeners ----------------
+        
+        document.addEventListener('DOMContentLoaded', function() {
+          // Mobile menu toggle - direct implementation
+          const menuToggleBtn = document.getElementById('menu-toggle');
+          const closeMenuBtn = document.getElementById('close-menu');
+          const overlay = document.getElementById('overlay');
+          const controlsPanel = document.getElementById('controls-panel');
+          
+          // Use named functions for clarity
+          menuToggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("Menu button clicked");
+            toggleMobileMenu();
+          });
+          
+          closeMenuBtn.addEventListener('click', function() {
+            controlsPanel.classList.remove('open');
+            overlay.classList.remove('active');
+          });
+          
+          overlay.addEventListener('click', function() {
+            controlsPanel.classList.remove('open');
+            overlay.classList.remove('active');
+          });
+          
+          // COMPLETELY REVISED: Section toggling for all devices
+          document.querySelectorAll('.section-title').forEach(title => {
+            // First, make sure all sections are expanded initially
+            const section = title.closest('.control-section');
+            section.classList.remove('collapsed');
+            
+            // Then add click handler
+            title.addEventListener('click', function() {
+              section.classList.toggle('collapsed');
+              console.log(`Section ${section.id} is now ${section.classList.contains('collapsed') ? 'collapsed' : 'expanded'}`);
+            });
+          });
+          
+          // Enhanced file upload
+          enhanceFileUpload();
+          
+          // Setup other event listeners
+          document.getElementById('asciiWidth').addEventListener('input', updateSettings);
+          document.getElementById('brightness').addEventListener('input', updateSettings);
+          document.getElementById('contrast').addEventListener('input', updateSettings);
+          document.getElementById('blur').addEventListener('input', updateSettings);
+          document.getElementById('dithering').addEventListener('change', updateSettings);
+          document.getElementById('ditherAlgorithm').addEventListener('change', updateSettings);
+          document.getElementById('invert').addEventListener('change', updateSettings);
+          document.getElementById('ignoreWhite').addEventListener('change', updateSettings);
+          document.getElementById('theme').addEventListener('change', updateSettings);
+          document.getElementById('charset').addEventListener('change', function() {
+            const manualControl = document.getElementById('manualCharControl');
+            manualControl.style.display = (this.value === 'manual') ? 'flex' : 'none';
+            updateSettings();
+          });
+          document.getElementById('zoom').addEventListener('input', updateSettings);
+          
+          // Edge detection radio buttons
+          document.querySelectorAll('input[name="edgeMethod"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+              const method = document.querySelector('input[name="edgeMethod"]:checked').value;
+              document.getElementById('sobelThresholdControl').style.display = (method === 'sobel') ? 'flex' : 'none';
+              document.getElementById('dogThresholdControl').style.display = (method === 'dog') ? 'flex' : 'none';
+              updateSettings();
+            });
+          });
+          document.getElementById('edgeThreshold').addEventListener('input', updateSettings);
+          document.getElementById('dogEdgeThreshold').addEventListener('input', updateSettings);
+          
+          // Buttons
+          document.getElementById('reset').addEventListener('click', resetSettings);
+          document.getElementById('copyBtn').addEventListener('click', function() {
+            const asciiText = document.getElementById('ascii-art').textContent;
+            navigator.clipboard.writeText(asciiText).then(() => {
+              alert('ASCII Art copied to clipboard!');
+            }, () => {
+              alert('Copy failed!');
+            });
+          });
+          document.getElementById('downloadBtn').addEventListener('click', downloadPNG);
+          
+          // Initialize with default image
+          const defaultImg = new Image();
+          defaultImg.crossOrigin = "Anonymous"; 
+          defaultImg.src = "https://i.ibb.co/xttsLCsM/baph.png";
+          defaultImg.onload = function() {
+            currentImage = defaultImg;
+            generateASCII(defaultImg);
+          };
+          
+          // Initialize values
+          updateSettings();
+          
+          // Toggle all controls implementation
+          const toggleAllButton = document.getElementById('toggle-all-controls');
+          let allCollapsed = false;
+          
+          toggleAllButton.addEventListener('click', function() {
+            const sections = document.querySelectorAll('.control-section');
+            allCollapsed = !allCollapsed;
+            
+            sections.forEach(section => {
+              if (allCollapsed) {
+                section.classList.add('collapsed');
+              } else {
+                section.classList.remove('collapsed');
+              }
+            });
+            
+            // Update button text and icon
+            if (allCollapsed) {
+              toggleAllButton.innerHTML = '<i class="ph-arrows-out"></i> Expand All';
+            } else {
+              toggleAllButton.innerHTML = '<i class="ph-arrows-in"></i> Collapse All';
+            }
+          });
+        });
+
+        // ---------------- Update and Reset Functions ----------------
+
+        function updateSettings() {
+          document.getElementById('asciiWidthVal').textContent = document.getElementById('asciiWidth').value;
+          document.getElementById('brightnessVal').textContent = document.getElementById('brightness').value;
+          document.getElementById('contrastVal').textContent = document.getElementById('contrast').value;
+          document.getElementById('blurVal').textContent = document.getElementById('blur').value;
+          document.getElementById('zoomVal').textContent = document.getElementById('zoom').value;
+          document.getElementById('edgeThresholdVal').textContent = document.getElementById('edgeThreshold').value;
+          document.getElementById('dogEdgeThresholdVal').textContent = document.getElementById('dogEdgeThreshold').value;
+          
+          // Update theme
+          const theme = document.getElementById('theme').value;
+          document.body.classList.toggle('light-mode', theme === 'light');
+          
+          // Adjust ASCII art font size based on zoom
+          const zoomPercent = parseInt(document.getElementById('zoom').value, 10);
+          const newFontSize = (baseFontSize * zoomPercent) / 100;
+          const asciiArt = document.getElementById('ascii-art');
+          asciiArt.style.fontSize = newFontSize + "px";
+          asciiArt.style.lineHeight = newFontSize + "px";
+          
+          if (currentImage) {
+            generateASCII(currentImage);
+          }
+        }
+
+        function resetSettings() {
+          document.getElementById('asciiWidth').value = 100;
+          document.getElementById('brightness').value = 0;
+          document.getElementById('contrast').value = 0;
+          document.getElementById('blur').value = 0;
+          document.getElementById('dithering').checked = true;
+          document.getElementById('ditherAlgorithm').value = 'floyd';
+          document.getElementById('invert').checked = false;
+          document.getElementById('ignoreWhite').checked = true;
+          document.getElementById('charset').value = 'detailed';
+          document.getElementById('zoom').value = 100;
+          document.getElementById('edgeNone').checked = true;
+          document.getElementById('edgeThreshold').value = 100;
+          document.getElementById('dogEdgeThreshold').value = 100;
+          document.getElementById('sobelThresholdControl').style.display = 'none';
+          document.getElementById('dogThresholdControl').style.display = 'none';
+          document.getElementById('brightness').disabled = false;
+          document.getElementById('contrast').disabled = false;
+          document.getElementById('blur').disabled = false;
+          document.getElementById('invert').disabled = false;
+          updateSettings();
+        }
+    </script>
+</body>
+</html>
